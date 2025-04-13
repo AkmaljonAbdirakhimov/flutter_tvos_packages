@@ -884,10 +884,14 @@ class VideoProgressColors {
   /// [backgroundColor] defaults to gray at 50% opacity. This is the background
   /// color behind both [playedColor] and [bufferedColor] to denote the total
   /// size of the video compared to either of those values.
+  ///
+  /// [thumbColor] defaults to red at 100% opacity. This is the color of the
+  /// draggable thumb on the progress indicator.
   const VideoProgressColors({
     this.playedColor = const Color.fromRGBO(255, 0, 0, 0.7),
     this.bufferedColor = const Color.fromRGBO(50, 50, 200, 0.2),
     this.backgroundColor = const Color.fromRGBO(200, 200, 200, 0.5),
+    this.thumbColor = const Color.fromRGBO(255, 0, 0, 1.0),
   });
 
   /// [playedColor] defaults to red at 70% opacity. This fills up a portion of
@@ -904,6 +908,9 @@ class VideoProgressColors {
   /// color behind both [playedColor] and [bufferedColor] to denote the total
   /// size of the video compared to either of those values.
   final Color backgroundColor;
+
+  /// [thumbColor] is the color of the draggable thumb on the progress indicator.
+  final Color thumbColor;
 }
 
 /// A scrubber to control [VideoPlayerController]s
@@ -916,6 +923,10 @@ class VideoScrubber extends StatefulWidget {
     super.key,
     required this.child,
     required this.controller,
+    this.onHorizontalDragStart,
+    this.onHorizontalDragUpdate,
+    this.onHorizontalDragEnd,
+    this.onTapDown,
   });
 
   /// The widget that will be displayed inside the gesture detector.
@@ -923,6 +934,11 @@ class VideoScrubber extends StatefulWidget {
 
   /// The [VideoPlayerController] that will be controlled by this scrubber.
   final VideoPlayerController controller;
+
+  final void Function(DragStartDetails)? onHorizontalDragStart;
+  final void Function(DragUpdateDetails)? onHorizontalDragUpdate;
+  final void Function(DragEndDetails)? onHorizontalDragEnd;
+  final void Function(TapDownDetails)? onTapDown;
 
   @override
   State<VideoScrubber> createState() => _VideoScrubberState();
@@ -960,18 +976,21 @@ class _VideoScrubberState extends State<VideoScrubber> {
           return;
         }
         seekToRelativePosition(details.globalPosition);
+        widget.onHorizontalDragUpdate?.call(details);
       },
       onHorizontalDragEnd: (DragEndDetails details) {
         if (_controllerWasPlaying &&
             controller.value.position != controller.value.duration) {
           controller.play();
         }
+        widget.onHorizontalDragEnd?.call(details);
       },
       onTapDown: (TapDownDetails details) {
         if (!controller.value.isInitialized) {
           return;
         }
         seekToRelativePosition(details.globalPosition);
+        widget.onTapDown?.call(details);
       },
     );
   }
@@ -997,6 +1016,12 @@ class VideoProgressIndicator extends StatefulWidget {
     this.colors = const VideoProgressColors(),
     required this.allowScrubbing,
     this.padding = const EdgeInsets.only(top: 5.0),
+    this.onHorizontalDragStart,
+    this.onHorizontalDragUpdate,
+    this.onHorizontalDragEnd,
+    this.onTapDown,
+    this.lineHeight = 4.0,
+    this.thumbSize = 16.0,
   });
 
   /// The [VideoPlayerController] that actually associates a video with this
@@ -1020,6 +1045,22 @@ class VideoProgressIndicator extends StatefulWidget {
   /// Defaults to `top: 5.0`.
   final EdgeInsets padding;
 
+  /// The height of the progress indicator line.
+  ///
+  /// Defaults to 4.0.
+  final double lineHeight;
+
+  /// The size of the scrubbing thumb.
+  /// This value determines both the width and height of the thumb.
+  ///
+  /// Defaults to 16.0.
+  final double thumbSize;
+
+  final void Function(DragStartDetails)? onHorizontalDragStart;
+  final void Function(DragUpdateDetails)? onHorizontalDragUpdate;
+  final void Function(DragEndDetails)? onHorizontalDragEnd;
+  final void Function(TapDownDetails)? onTapDown;
+
   @override
   State<VideoProgressIndicator> createState() => _VideoProgressIndicatorState();
 }
@@ -1035,6 +1076,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
   }
 
   late VoidCallback listener;
+  bool _isHovering = false;
 
   VideoPlayerController get controller => widget.controller;
 
@@ -1067,34 +1109,88 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
         }
       }
 
-      progressIndicator = Stack(
-        fit: StackFit.passthrough,
-        children: <Widget>[
-          LinearProgressIndicator(
-            value: maxBuffering / duration,
-            valueColor: AlwaysStoppedAnimation<Color>(colors.bufferedColor),
-            backgroundColor: colors.backgroundColor,
-          ),
-          LinearProgressIndicator(
-            value: position / duration,
-            valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
-            backgroundColor: Colors.transparent,
-          ),
-        ],
+      progressIndicator = LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Stack(
+            fit: StackFit.passthrough,
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              SizedBox(
+                height: widget.lineHeight,
+                child: LinearProgressIndicator(
+                  value: maxBuffering / duration,
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(colors.bufferedColor),
+                  backgroundColor: colors.backgroundColor,
+                ),
+              ),
+              SizedBox(
+                height: widget.lineHeight,
+                child: LinearProgressIndicator(
+                  value: position / duration,
+                  valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+              if (widget.allowScrubbing)
+                Positioned(
+                  left: (position / duration) * constraints.maxWidth -
+                      (widget.thumbSize / 2),
+                  top: (widget.lineHeight / 2) - (widget.thumbSize / 2),
+                  child: MouseRegion(
+                    onEnter: (_) => setState(() => _isHovering = true),
+                    onExit: (_) => setState(() => _isHovering = false),
+                    child: Container(
+                      width: widget.thumbSize,
+                      height: widget.thumbSize,
+                      decoration: BoxDecoration(
+                        color: colors.thumbColor,
+                        shape: BoxShape.circle,
+                        boxShadow: _isHovering
+                            ? [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                )
+                              ]
+                            : null,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       );
     } else {
-      progressIndicator = LinearProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
-        backgroundColor: colors.backgroundColor,
+      progressIndicator = SizedBox(
+        height: widget.lineHeight,
+        child: LinearProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
+          backgroundColor: colors.backgroundColor,
+        ),
       );
     }
     final Widget paddedProgressIndicator = Padding(
       padding: widget.padding,
-      child: progressIndicator,
+      child: SizedBox(
+        height: widget.lineHeight +
+            (widget.allowScrubbing
+                ? widget.thumbSize
+                : 0), // Adjust height based on lineHeight and thumbSize if scrubbing is allowed
+        child: Center(
+          child: progressIndicator,
+        ),
+      ),
     );
     if (widget.allowScrubbing) {
       return VideoScrubber(
         controller: controller,
+        onHorizontalDragStart: widget.onHorizontalDragStart,
+        onHorizontalDragUpdate: widget.onHorizontalDragUpdate,
+        onHorizontalDragEnd: widget.onHorizontalDragEnd,
+        onTapDown: widget.onTapDown,
         child: paddedProgressIndicator,
       );
     } else {
