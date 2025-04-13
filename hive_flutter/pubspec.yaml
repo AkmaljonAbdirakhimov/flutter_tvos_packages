@@ -12,7 +12,10 @@ dependencies:
     sdk: flutter
 
   hive: ^2.2.3
-  path_provider: ^2.1.5
+  path_provider:
+    git:
+      url: https://github.com/AkmaljonAbdirakhimov/flutter_tvos_packages.git
+      path: path_provider/path_provider
   path: ^1.8.0
 
 dev_dependencies:

@@ -1,3 +1,7 @@
+path_provider
+3.4
+file:///Users/Akmaljon/.pub-cache/git/flutter_tvos_packages-c0c076f9bd0a2846f0b23832e878865e74a3bcaa/path_provider/path_provider/
+file:///Users/Akmaljon/.pub-cache/git/flutter_tvos_packages-c0c076f9bd0a2846f0b23832e878865e74a3bcaa/path_provider/path_provider/lib/
 _fe_analyzer_shared
 3.3
 file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/_fe_analyzer_shared-80.0.0/
@@ -178,10 +182,6 @@ path
 3.4
 file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/path-1.9.1/
 file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/path-1.9.1/lib/
-path_provider
-3.4
-file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/path_provider-2.1.5/
-file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/path_provider-2.1.5/lib/
 path_provider_android
 3.6
 file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/path_provider_android-2.2.16/
