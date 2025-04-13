@@ -369,11 +369,10 @@ packages:
   path_provider:
     dependency: "direct main"
     description:
-      path: "path_provider/path_provider"
-      ref: HEAD
-      resolved-ref: c0c076f9bd0a2846f0b23832e878865e74a3bcaa
-      url: "https://github.com/AkmaljonAbdirakhimov/flutter_tvos_packages.git"
-    source: git
+      name: path_provider
+      sha256: "50c5dd5b6e1aaf6fb3a78b33f6aa3afca52bf903a8a5298f53101fdaee55bbcd"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.1.5"
   path_provider_android:
     dependency: transitive
