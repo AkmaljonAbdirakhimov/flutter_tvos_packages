@@ -92,6 +92,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "path_provider_foundation",
+      "rootUri": "file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/path_provider_foundation-2.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "platform",
       "rootUri": "file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/platform-3.1.6",
       "packageUri": "lib/",
@@ -164,7 +170,7 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2025-04-13T05:27:55.357307Z",
+  "generated": "2025-04-13T06:45:34.423213Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/Akmaljon/Desktop/Akmaljon/Programs/flutter",

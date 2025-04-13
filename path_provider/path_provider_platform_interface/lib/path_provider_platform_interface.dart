@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path_provider_foundation/path_provider_foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'src/enums.dart';
@@ -22,7 +23,12 @@ abstract class PathProviderPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static PathProviderPlatform _instance = MethodChannelPathProvider();
+  static const tvMode = String.fromEnvironment('TV_MODE');
+
+  static bool get isTv => tvMode == 'ON';
+
+  static PathProviderPlatform _instance =
+      isTv ? PathProviderFoundation() : MethodChannelPathProvider();
 
   /// The default instance of [PathProviderPlatform] to use.
   ///

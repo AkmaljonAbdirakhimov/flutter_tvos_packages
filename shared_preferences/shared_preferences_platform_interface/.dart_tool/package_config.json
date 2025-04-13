@@ -98,6 +98,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "shared_preferences_foundation",
+      "rootUri": "file:///Users/Akmaljon/.pub-cache/hosted/pub.dev/shared_preferences_foundation-2.5.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "sky_engine",
       "rootUri": "file:///Users/Akmaljon/Desktop/Akmaljon/Programs/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -158,7 +164,7 @@
       "languageVersion": "3.4"
     }
   ],
-  "generated": "2025-04-13T05:28:09.911012Z",
+  "generated": "2025-04-13T06:47:24.891333Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/Akmaljon/Desktop/Akmaljon/Programs/flutter",

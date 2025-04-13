@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
 
 import 'method_channel_shared_preferences.dart';
 import 'types.dart';
@@ -23,6 +24,10 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
+  static const tvMode = String.fromEnvironment('TV_MODE');
+
+  static bool get isTv => tvMode == 'ON';
+
   /// The default instance of [SharedPreferencesStorePlatform] to use.
   ///
   /// Defaults to [MethodChannelSharedPreferencesStore].
@@ -37,8 +42,9 @@ abstract class SharedPreferencesStorePlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  static SharedPreferencesStorePlatform _instance =
-      MethodChannelSharedPreferencesStore();
+  static SharedPreferencesStorePlatform _instance = isTv
+      ? SharedPreferencesFoundation()
+      : MethodChannelSharedPreferencesStore();
 
   /// Only mock implementations should set this to true.
   ///
