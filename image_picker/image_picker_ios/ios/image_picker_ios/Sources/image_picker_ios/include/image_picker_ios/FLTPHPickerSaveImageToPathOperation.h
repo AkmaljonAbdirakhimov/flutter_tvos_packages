@@ -25,12 +25,14 @@ typedef void (^FLTGetSavedPath)(NSString *_Nullable savedPath, FlutterError *_Nu
 /// @helps It helps FLTImagePickerPlugin class.
 @interface FLTPHPickerSaveImageToPathOperation : NSOperation
 
+#if !TARGET_OS_TV
 - (instancetype)initWithResult:(PHPickerResult *)result
                      maxHeight:(NSNumber *)maxHeight
                       maxWidth:(NSNumber *)maxWidth
            desiredImageQuality:(NSNumber *)desiredImageQuality
                   fullMetadata:(BOOL)fullMetadata
                 savedPathBlock:(FLTGetSavedPath)savedPathBlock API_AVAILABLE(ios(14));
+#endif
 
 @end
 

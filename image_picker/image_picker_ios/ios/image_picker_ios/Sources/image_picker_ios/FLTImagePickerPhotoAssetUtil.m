@@ -11,7 +11,12 @@
 @implementation FLTImagePickerPhotoAssetUtil
 
 + (PHAsset *)getAssetFromImagePickerInfo:(NSDictionary *)info {
+#if TARGET_OS_TV
+  // UIImagePickerControllerPHAsset not available on tvOS
+  return nil;
+#else
   return info[UIImagePickerControllerPHAsset];
+#endif
 }
 
 + (NSURL *)saveVideoFromURL:(NSURL *)videoURL {
@@ -61,12 +66,21 @@
 + (NSString *)saveImageWithPickerInfo:(nullable NSDictionary *)info
                                 image:(UIImage *)image
                          imageQuality:(NSNumber *)imageQuality {
+#if TARGET_OS_TV
+  // UIImagePickerControllerMediaMetadata not available on tvOS
+  return [self saveImageWithMetaData:nil
+                               image:image
+                              suffix:kFLTImagePickerDefaultSuffix
+                                type:kFLTImagePickerMIMETypeDefault
+                        imageQuality:imageQuality];
+#else
   NSDictionary *metaData = info[UIImagePickerControllerMediaMetadata];
   return [self saveImageWithMetaData:metaData
                                image:image
                               suffix:kFLTImagePickerDefaultSuffix
                                 type:kFLTImagePickerMIMETypeDefault
                         imageQuality:imageQuality];
+#endif
 }
 
 + (NSString *)saveImageWithMetaData:(NSDictionary *)metaData
