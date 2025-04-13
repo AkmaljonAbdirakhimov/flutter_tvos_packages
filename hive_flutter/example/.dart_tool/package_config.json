@@ -1,0 +1,17 @@
+{
+  "configVersion": 2,
+  "packages": [
+    {
+      "name": "example",
+      "rootUri": "../",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    }
+  ],
+  "generated": "2025-04-13T05:50:38.335715Z",
+  "generator": "pub",
+  "generatorVersion": "3.7.2",
+  "flutterRoot": "file:///Users/Akmaljon/Desktop/Akmaljon/Programs/flutter",
+  "flutterVersion": "3.29.2",
+  "pubCache": "file:///Users/Akmaljon/.pub-cache"
+}
